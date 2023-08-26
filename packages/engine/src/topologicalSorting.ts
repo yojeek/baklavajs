@@ -17,6 +17,47 @@ function isString(v: string | undefined): v is string {
     return typeof v === "string";
 }
 
+/**
+ * Utility function to convers inputs to more useful data structures
+ */
+function nodesOrGrapthToData(
+    nodesOrGraph: ReadonlyArray<AbstractNode> | Graph,
+    pConnections?: ReadonlyArray<IConnection>,
+): {
+    nodes: ReadonlyArray<AbstractNode>
+    connections: ReadonlyArray<IConnection>
+    interfaceIdToNodeId: Map<string, string>
+    nodeIdToNode: Map<string, AbstractNode>
+} {
+    let nodes: ReadonlyArray<AbstractNode>;
+    let connections: ReadonlyArray<IConnection>;
+    const interfaceIdToNodeId = new Map<string, string>();
+
+    // if (nodesOrGraph instanceof Graph) { <-- doesn't work with proxie
+    if ("nodes" in nodesOrGraph && "connections" in nodesOrGraph) {
+        nodes = nodesOrGraph.nodes;
+        connections = nodesOrGraph.connections;
+    } else {
+        if (!pConnections) {
+            throw new Error("Invalid argument value: expected array of connections");
+        }
+        nodes = nodesOrGraph;
+        connections = pConnections;
+    }
+
+    nodes.forEach((n) => {
+        Object.values(n.inputs).forEach((intf) => interfaceIdToNodeId.set(intf.id, n.id));
+        Object.values(n.outputs).forEach((intf) => interfaceIdToNodeId.set(intf.id, n.id));
+    });
+
+    const nodeIdToNode = nodes.reduce((map, node) => {
+        map.set(node.id, node);
+        return map;
+    }, new Map<string, AbstractNode>());
+
+    return { nodes, connections, interfaceIdToNodeId, nodeIdToNode };
+}
+
 /** Uses Kahn's algorithm to topologically sort the nodes in the graph */
 export function sortTopologically(graph: Graph): ITopologicalSortingResult;
 /** Uses Kahn's algorithm to topologically sort the nodes in the graph */
@@ -33,31 +74,11 @@ export function sortTopologically(
     nodesOrGraph: ReadonlyArray<AbstractNode> | Graph,
     pConnections?: ReadonlyArray<IConnection>,
 ): ITopologicalSortingResult {
-    /** NodeInterface.id -> parent Node.id */
-    const interfaceIdToNodeId = new Map<string, string>();
-
     /** Node.id -> set of connected node.id */
     const adjacency = new Map<string, Set<string>>();
     const connectionsFromNode = new Map<AbstractNode, IConnection[]>();
 
-    let nodes: ReadonlyArray<AbstractNode>;
-    let connections: ReadonlyArray<IConnection>;
-
-    if (nodesOrGraph instanceof Graph) {
-        nodes = nodesOrGraph.nodes;
-        connections = nodesOrGraph.connections;
-    } else {
-        if (!pConnections) {
-            throw new Error("Invalid argument value: expected array of connections");
-        }
-        nodes = nodesOrGraph;
-        connections = pConnections;
-    }
-
-    nodes.forEach((n) => {
-        Object.values(n.inputs).forEach((intf) => interfaceIdToNodeId.set(intf.id, n.id));
-        Object.values(n.outputs).forEach((intf) => interfaceIdToNodeId.set(intf.id, n.id));
-    });
+    const { nodes, connections, interfaceIdToNodeId } = nodesOrGrapthToData(nodesOrGraph, pConnections);
 
     // build adjacency list
     nodes.forEach((n) => {
@@ -124,4 +145,79 @@ export function containsCycle(
         }
         throw err;
     }
+}
+
+type GraphComponent = {
+    nodes: Array<AbstractNode>;
+    connections: Array<IConnection>;
+};
+
+export interface ISortedComponentResult extends Array<ITopologicalSortingResult> { }
+
+export function connectedComponents(
+    nodesOrGraph: ReadonlyArray<AbstractNode> | Graph,
+    pConnections?: ReadonlyArray<IConnection>,
+): GraphComponent[] {
+    const { nodes, connections, interfaceIdToNodeId, nodeIdToNode } = nodesOrGrapthToData(nodesOrGraph, pConnections);
+
+    const successors = new Map<string, IConnection[]>();
+    const predecessors = new Map<string, IConnection[]>();
+
+    // build predecessors and successors list
+    nodes.forEach((n) => {
+        const connectionsFromCurrentNode = connections.filter(
+            (c) => c.from && interfaceIdToNodeId.get(c.from.id) === n.id,
+        );
+
+        if (!predecessors.has(n.id)) {
+            predecessors.set(n.id, []);
+        }
+        
+        for (const connection of connectionsFromCurrentNode) {
+            if (!predecessors.has(connection.to.nodeId)) {
+                predecessors.set(connection.to.nodeId, []);
+            }
+            predecessors.get(connection.to.nodeId)!.push(connection);
+        }
+
+        successors.set(n.id, connectionsFromCurrentNode);
+    });
+
+
+    const components: Array<GraphComponent> = [];
+    const visited = new Set<string>();
+
+    function dfs(nodeId: string, component: GraphComponent) {
+        if (visited.has(nodeId)) {
+            return;
+        }
+        visited.add(nodeId);
+        component.nodes.push(nodeIdToNode.get(nodeId)!);
+        const nSuccessors = successors.get(nodeId)!;
+        component.connections.push(...nSuccessors);
+        for (const connection of nSuccessors) {
+            dfs(connection.to.nodeId, component);
+        }
+        for (const connection of predecessors.get(nodeId)!) {
+            dfs(connection.from.nodeId, component);
+        }
+    }
+
+    for (const node of nodes) {
+        if (!visited.has(node.id)) {
+            const component: GraphComponent = { nodes: [], connections: [] };
+            dfs(node.id, component);
+            components.push(component);
+        }
+    }
+
+    return components;
+}
+
+export function getSortedComponents(
+    nodesOrGraph: ReadonlyArray<AbstractNode> | Graph,
+    pConnections?: ReadonlyArray<IConnection>,
+): ISortedComponentResult {
+    const components = connectedComponents(nodesOrGraph, pConnections);
+    return components.map((c) => sortTopologically(c.nodes, c.connections));
 }
