@@ -90,4 +90,27 @@ describe("DependencyEngine", () => {
 
         expect(spy).toHaveBeenCalledWith([2, 0]);
     });
+
+    it("calculate nodes only in connected components", async () => {
+        const editor = new Editor();
+        const n1 = editor.graph.addNode(new TestNode())!;
+        const n1calculateSpy = jest.spyOn(n1, "calculate");
+        const n2 = editor.graph.addNode(new TestNode())!;
+        const n2calculateSpy = jest.spyOn(n2, "calculate");
+        const n3 = editor.graph.addNode(new TestNode())!;
+        const n3calculateSpy = jest.spyOn(n3, "calculate");
+        editor.graph.addConnection(n1.outputs.c, n2.inputs.a);
+
+        const engine = new DependencyEngine<void>(editor);
+        engine.updatedNode = n1;
+
+        const result = (await engine.runOnce())!;
+
+        expect(n1calculateSpy).toHaveBeenCalled();
+        expect(n2calculateSpy).toHaveBeenCalled();
+        expect(n3calculateSpy).not.toHaveBeenCalled();
+        expect(result.size).toEqual(2);
+        expect(Object.fromEntries(result.get(n1.id)!.entries())).toEqual({ c: 2, d: 0 });
+        expect(Object.fromEntries(result.get(n2.id)!.entries())).toEqual({ c: 3, d: 1 });
+    });
 });
