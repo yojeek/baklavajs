@@ -18,8 +18,8 @@ describe("ForwardEngine", () => {
         const engine = new ForwardEngine(e);
         const result = (await engine.runOnce(undefined, n1, undefined))!;
         expect(result.size).toEqual(3);
-        expect(Object.fromEntries(result.get(n1.id)!.entries())).toEqual({ c: 15, d: 5 });
-        expect(Object.fromEntries(result.get(n2.id)!.entries())).toEqual({ c: 30, d: 0 });
-        expect(Object.fromEntries(result.get(n3.id)!.entries())).toEqual({ c: 10, d: 0 });
+        expect(Object.fromEntries(result.get(n1.id)!.outputs.entries())).toEqual({ c: 15, d: 5 });
+        expect(Object.fromEntries(result.get(n2.id)!.outputs.entries())).toEqual({ c: 30, d: 0 });
+        expect(Object.fromEntries(result.get(n3.id)!.outputs.entries())).toEqual({ c: 10, d: 0 });
     });
 });

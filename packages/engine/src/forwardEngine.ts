@@ -21,7 +21,7 @@ export class ForwardEngine<CalculationData = any> extends BaseEngine<
         data: INodeUpdateEventData | undefined,
     ): Promise<CalculationResult> {
         const nodesToCalculate: Array<{ node: AbstractNode; inputData: Record<string, any> }> = [];
-        const result = new Map<string, Map<string, any>>();
+        const result: CalculationResult = new Map();
 
         if (startingNode.calculate) {
             // TODO: Make it possible to give the initial data to the function
@@ -43,7 +43,10 @@ export class ForwardEngine<CalculationData = any> extends BaseEngine<
                 globalValues: calculationData,
             });
             this.validateNodeCalculationOutput(node, r);
-            result.set(node.id, new Map(Object.entries(r)));
+            result.set(node.id, {
+                inputs: new Map(Object.entries(inputData)),
+                outputs: new Map(Object.entries(r)),
+            });
 
             const graph = node.graph;
             if (!graph) {

@@ -1,6 +1,6 @@
-import type { AbstractNode, Editor, Graph, NodeInterface } from "@baklavajs/core";
-import { BaseEngine, CalculationResult } from "./baseEngine";
-import { ITopologicalSortingResult, getSortedComponents } from "./topologicalSorting";
+import type {AbstractNode, Editor, Graph, NodeInterface} from "@baklavajs/core";
+import {BaseEngine, CalculationResult} from "./baseEngine";
+import {getSortedComponents, ITopologicalSortingResult} from "./topologicalSorting";
 
 export const allowMultipleConnections = <T extends Array<any>>(intf: NodeInterface<T>) => {
     intf.allowMultipleConnections = true;
@@ -34,46 +34,78 @@ export class DependencyEngine<CalculationData = any> extends BaseEngine<Calculat
         const calculateComponent = async (sortedComponent: ITopologicalSortingResult) => {
             const { calculationOrder, connectionsFromNode } = sortedComponent;
 
-            for (const n of calculationOrder) {
-                if (!n.calculate) {
+            let starIdx = 0;
+
+            if (updatedNode) {
+                starIdx = calculationOrder.findIndex((n) => n.id === updatedNode.id);
+            }
+
+            if (starIdx === -1) {
+                throw new Error(
+                    `Could not find node ${updatedNode?.id} in calculation order\n` +
+                    'This is likely a Baklava internal issue. Please report it on GitHub.'
+                );
+            }
+
+            for (let i = starIdx; i < calculationOrder.length; i++) {
+                const node = calculationOrder[i];
+
+                if (!node.calculate) {
                     continue;
                 }
 
-                const inputsForNode: Record<string, any> = {};
-                Object.entries(n.inputs).forEach(([k, v]) => {
-                    if (!inputs.has(v.id)) {
-                        throw new Error(
-                            `Could not find value for interface ${v.id}\n` +
-                                "This is likely a Baklava internal issue. Please report it on GitHub.",
-                        );
+                const inputValues: Record<string, any> = {};
+                let inputsChanged = false;
+
+                Object.entries(node.inputs).forEach(([k, v]) => {
+                    inputValues[k] = inputs.has(v.id) ? inputs.get(v.id) : v.value;
+
+                    if (inputValues[k] !== v.value) {
+                        inputsChanged = true;
                     }
-                    inputsForNode[k] = inputs.get(v.id);
                 });
 
-                this.events.beforeNodeCalculation.emit({ inputValues: inputsForNode, node: n });
-                const r = await n.calculate(inputsForNode, { globalValues: calculationData, engine: this });
-                this.validateNodeCalculationOutput(n, r);
-                this.events.afterNodeCalculation.emit({ outputValues: r, node: n });
+                this.events.beforeNodeCalculation.emit({ inputValues, node });
 
-                result.set(n.id, new Map(Object.entries(r)));
-                if (connectionsFromNode.has(n)) {
-                    connectionsFromNode.get(n)!.forEach((c) => {
-                        const intfKey = Object.entries(n.outputs).find(([, intf]) => intf.id === c.from.id)?.[0];
+                let outputValues: Record<string, any>;
+
+                // to avoid extra calculations, make following checks
+                // - if no updated node provided, calculate all
+                // - if the node is the updated node, calculate it (assume that inputs changed)
+                // - if the node is not the updated node, check if inputs changed
+                if (!updatedNode || node.id === updatedNode.id || inputsChanged) {
+                    outputValues = await node.calculate(inputValues, { globalValues: calculationData, engine: this })
+                } else {
+                    // collect current output values
+                    outputValues = Object.fromEntries(Object.entries(node.outputs).map(([k, v]) => [k, v.value]));
+                }
+
+                this.validateNodeCalculationOutput(node, outputValues);
+                this.events.afterNodeCalculation.emit({ outputValues, node });
+
+                result.set(node.id, {
+                    inputs: new Map(Object.entries(inputValues)),
+                    outputs: new Map(Object.entries(outputValues)),
+                });
+
+                if (connectionsFromNode.has(node)) {
+                    connectionsFromNode.get(node)!.forEach((connection) => {
+                        const intfKey = Object.entries(node.outputs).find(([, intf]) => intf.id === connection.from.id)?.[0];
                         if (!intfKey) {
                             throw new Error(
-                                `Could not find key for interface ${c.from.id}\n` +
+                                `Could not find key for interface ${connection.from.id}\n` +
                                     "This is likely a Baklava internal issue. Please report it on GitHub.",
                             );
                         }
-                        const v = this.hooks.transferData.execute(r[intfKey], c);
-                        if (c.to.allowMultipleConnections) {
-                            if (inputs.has(c.to.id)) {
-                                (inputs.get(c.to.id)! as Array<any>).push(v);
+                        const v = this.hooks.transferData.execute(outputValues[intfKey], connection);
+                        if (connection.to.allowMultipleConnections) {
+                            if (inputs.has(connection.to.id)) {
+                                (inputs.get(connection.to.id)! as Array<any>).push(v);
                             } else {
-                                inputs.set(c.to.id, [v]);
+                                inputs.set(connection.to.id, [v]);
                             }
                         } else {
-                            inputs.set(c.to.id, v);
+                            inputs.set(connection.to.id, v);
                         }
                     });
                 }

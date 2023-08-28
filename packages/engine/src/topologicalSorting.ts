@@ -18,9 +18,9 @@ function isString(v: string | undefined): v is string {
 }
 
 /**
- * Utility function to convers inputs to more useful data structures
+ * Utility function to convert inputs to more useful data structures
  */
-function nodesOrGrapthToData(
+function nodesOrGraphToData(
     nodesOrGraph: ReadonlyArray<AbstractNode> | Graph,
     pConnections?: ReadonlyArray<IConnection>,
 ): {
@@ -33,7 +33,7 @@ function nodesOrGrapthToData(
     let connections: ReadonlyArray<IConnection>;
     const interfaceIdToNodeId = new Map<string, string>();
 
-    // if (nodesOrGraph instanceof Graph) { <-- doesn't work with proxie
+    // if (nodesOrGraph instanceof Graph) { <-- doesn't work with proxy
     if ("nodes" in nodesOrGraph && "connections" in nodesOrGraph) {
         nodes = nodesOrGraph.nodes;
         connections = nodesOrGraph.connections;
@@ -78,7 +78,7 @@ export function sortTopologically(
     const adjacency = new Map<string, Set<string>>();
     const connectionsFromNode = new Map<AbstractNode, IConnection[]>();
 
-    const { nodes, connections, interfaceIdToNodeId } = nodesOrGrapthToData(nodesOrGraph, pConnections);
+    const { nodes, connections, interfaceIdToNodeId } = nodesOrGraphToData(nodesOrGraph, pConnections);
 
     // build adjacency list
     nodes.forEach((n) => {
@@ -158,7 +158,7 @@ export function connectedComponents(
     nodesOrGraph: ReadonlyArray<AbstractNode> | Graph,
     pConnections?: ReadonlyArray<IConnection>,
 ): GraphComponent[] {
-    const { nodes, connections, interfaceIdToNodeId, nodeIdToNode } = nodesOrGrapthToData(nodesOrGraph, pConnections);
+    const { nodes, connections, interfaceIdToNodeId, nodeIdToNode } = nodesOrGraphToData(nodesOrGraph, pConnections);
 
     const successors = new Map<string, IConnection[]>();
     const predecessors = new Map<string, IConnection[]>();
@@ -172,7 +172,7 @@ export function connectedComponents(
         if (!predecessors.has(n.id)) {
             predecessors.set(n.id, []);
         }
-        
+
         for (const connection of connectionsFromCurrentNode) {
             if (!predecessors.has(connection.to.nodeId)) {
                 predecessors.set(connection.to.nodeId, []);
