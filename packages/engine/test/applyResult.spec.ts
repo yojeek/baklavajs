@@ -1,6 +1,6 @@
-import { Editor } from "@baklavajs/core";
-import { applyResult } from "../src";
-import { TestNode } from "./testNode";
+import {Editor} from "@baklavajs/core";
+import {applyResult, CalculationResult} from "../src";
+import {TestNode} from "./testNode";
 
 describe("applyResult", () => {
     it("correctly applies a calculation result", () => {
@@ -10,27 +10,36 @@ describe("applyResult", () => {
         const n3 = new TestNode();
         [n1, n2, n3].forEach((n) => e.graph.addNode(n));
 
-        const calculationResult = new Map([
+        const calculationResult: CalculationResult = new Map([
             [
                 n1.id,
-                new Map([
-                    ["c", 15],
-                    ["d", 5],
-                ]),
+                {
+                    inputs: new Map(),
+                    outputs: new Map([
+                        ["c", 15],
+                        ["d", 5],
+                    ])
+                },
             ],
             [
                 n2.id,
-                new Map([
-                    ["c", 30],
-                    ["d", 0],
-                ]),
+                {
+                    inputs: new Map(),
+                    outputs: new Map([
+                        ["c", 30],
+                        ["d", 0],
+                    ])
+                },
             ],
             [
                 n3.id,
-                new Map([
-                    ["c", 10],
-                    ["d", 0],
-                ]),
+                {
+                    inputs: new Map(),
+                    outputs: new Map([
+                        ["c", 10],
+                        ["d", 0],
+                    ])
+                },
             ],
         ]);
 
@@ -49,8 +58,14 @@ describe("applyResult", () => {
         const n1 = new TestNode();
         e.graph.addNode(n1);
         const calculationResult = new Map([
-            ["invalid", new Map([["invalid", 5]])],
-            [n1.id, new Map([["invalid", 5]])],
+            ["invalid", {
+                inputs: new Map(),
+                outputs: new Map([["invalid", 5]]),
+            }],
+            [n1.id, {
+                inputs: new Map(),
+                outputs: new Map([["invalid", 5]])
+            }],
         ]);
         expect(() => applyResult(calculationResult, e)).not.toThrow();
     });

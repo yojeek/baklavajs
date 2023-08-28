@@ -17,7 +17,10 @@ import { containsCycle } from "./topologicalSorting";
  *   Calculation result key: output interface key
  *   Calculation result value: calculated value for that interface
  */
-export type CalculationResult = Map<string, Map<string, any>>;
+export type CalculationResult = Map<string, {
+    inputs: Record<string, any>,
+    outputs: Record<string, any>,
+}>;
 
 export enum EngineStatus {
     /** The engine is currently running a calculation */
@@ -291,9 +294,7 @@ export abstract class BaseEngine<CalculationData, CalculationArgs extends Array<
         }
         Object.keys(node.outputs).forEach((k) => {
             if (!(k in output)) {
-                throw new Error(
-                    `Calculation return value from node ${node.id} (type ${node.type}) is missing key "${k}"`,
-                );
+                console.warn(`Calculation return value from node ${node.id} (type ${node.type}) is missing key "${k}"`)
             }
         });
     }

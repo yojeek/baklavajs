@@ -18,13 +18,16 @@ export function applyResult(result: CalculationResult, editor: Editor): void {
             return;
         }
 
-        intfValues.forEach((value, intfKey) => {
-            const intf = node.outputs[intfKey];
-            if (!intf) {
-                return;
+        intfValues.inputs.forEach((value: any, intfKey: number) => {
+            if (node.inputs[intfKey] && node.inputs[intfKey].value !== value) {
+                node.inputs[intfKey].value = value;
             }
+        });
 
-            intf.value = value;
+        intfValues.outputs.forEach((value: any, intfKey: number) => {
+            if (node.outputs[intfKey] && node.outputs[intfKey].value !== value) {
+                node.outputs[intfKey].value = value;
+            }
         });
     });
 }
