@@ -12,6 +12,11 @@ export interface IGraphNode {
     subgraph: Graph | undefined;
 }
 
+type CalculationResult = Map<string, {
+    inputs: Record<string, any>,
+    outputs: Record<string, any>,
+}>
+
 export const GRAPH_NODE_TYPE_PREFIX = "__baklava_GraphNode-";
 
 export function getGraphNodeTypeString(template: GraphTemplate): string {
@@ -60,15 +65,15 @@ export abstract class AbstractGraphNode extends AbstractNode implements IGraphNo
                 graphInputs.set(gi.nodeInterfaceId, v);
             });
 
-            const result: Map<string, Map<string, any>> = await context.engine.runGraph(
+            const result: CalculationResult = await context.engine.runGraph(
                 this.subgraph,
                 graphInputs,
                 context.globalValues,
             );
             const flatResult: Map<string, any> = new Map();
-            result.forEach((nodeOutputs, nodeId) => {
+            result.forEach(({outputs: nodeOutputs}, nodeId) => {
                 const node = this.subgraph!.nodes.find((n) => n.id === nodeId)!;
-                nodeOutputs.forEach((v, nodeInterfaceKey) => {
+                nodeOutputs.forEach((v: any, nodeInterfaceKey: string) => {
                     flatResult.set(node.outputs[nodeInterfaceKey].id, v);
                 });
             });
