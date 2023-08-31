@@ -325,7 +325,7 @@ export abstract class BaseEngine<CalculationData, CalculationArgs extends Array<
     ): void;
 
     private internalOnChange(updatedNode?: AbstractNode, data?: INodeUpdateEventData) {
-        if (this.internalStatus === EngineStatus.Idle) {
+        if (this.status === EngineStatus.Idle) {
             this.onChange(this.recalculateOrder, updatedNode, data);
         }
     }
