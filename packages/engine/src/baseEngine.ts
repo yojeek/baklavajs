@@ -121,12 +121,15 @@ export abstract class BaseEngine<CalculationData, CalculationArgs extends Array<
         this.editor.graphEvents.addConnection.subscribe(this, (c, graph) => {
             this.recalculateOrder = true;
             if (!graph.loading && graph.activeTransactions === 0) {
-                this.internalOnChange();
+                // workaround for engine not recalculating if connection was removed and added simultaneously
+                // the issue will stiil exist in async calculate scenario, though.
+                // todo fixme
+                setTimeout( () => { this.internalOnChange() }, 0)
             }
         });
 
         this.editor.graphEvents.removeConnection.subscribe(this, (c, graph) => {
-            this.recalculateOrder = true;
+                        this.recalculateOrder = true;
             if (!graph.loading && graph.activeTransactions === 0) {
                 this.internalOnChange();
             }
