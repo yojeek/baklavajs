@@ -10,3 +10,6 @@ export * from "./utility";
 
 export * as Components from "./components";
 export * as Commands from "./commandList";
+
+export * as Icons from "./icons";
+export { default as ToolbarButton} from "./toolbar/ToolbarButton.vue";
