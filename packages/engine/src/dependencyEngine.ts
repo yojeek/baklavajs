@@ -55,13 +55,19 @@ export class DependencyEngine<CalculationData = any> extends BaseEngine<Calculat
                 }
 
                 const inputValues: Record<string, any> = {};
-                let inputsChanged = false;
+                let inputsChanged = [];
 
                 Object.entries(node.inputs).forEach(([k, v]) => {
                     inputValues[k] = inputs.has(v.id) ? inputs.get(v.id) : v.value;
 
-                    if (inputValues[k] !== v.value) {
-                        inputsChanged = true;
+                    // @ts-ignore – hack to get rid of vue proxies without importing vue methods in the engine
+                    if (node.compareInterfaceValues) {
+                        // @ts-ignore
+                        if (!node.compareInterfaceValues(inputValues[k], v.value)) {
+                            inputsChanged.push([inputValues[k], v.value]);
+                        }
+                    } else if (inputValues[k] !== v.value) {
+                        inputsChanged.push([inputValues[k], v.value]);
                     }
                 });
 
@@ -73,7 +79,7 @@ export class DependencyEngine<CalculationData = any> extends BaseEngine<Calculat
                 // - if no updated node provided, calculate all
                 // - if the node is the updated node, calculate it (assume that inputs changed)
                 // - if the node is not the updated node, check if inputs changed
-                if (!updatedNode || node.id === updatedNode.id || inputsChanged) {
+                if (!updatedNode || node.id === updatedNode.id || inputsChanged.length) {
                     outputValues = await node.calculate(inputValues, { globalValues: calculationData, engine: this })
                 } else {
                     // collect current output values
