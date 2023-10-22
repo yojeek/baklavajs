@@ -138,10 +138,14 @@ const keyUp = (ev: KeyboardEvent) => {
 };
 
 const selectNode = (node: AbstractNode) => {
-    if (!props.viewModel.commandHandler.pressedKeys.includes("Control")) {
+    if (!props.viewModel.commandHandler.pressedKeys.includes("Shift")) {
         unselectAllNodes();
     }
-    props.viewModel.displayedGraph.selectedNodes.push(node);
+    if (props.viewModel.displayedGraph.selectedNodes.includes(node)) {
+        props.viewModel.displayedGraph.selectedNodes = props.viewModel.displayedGraph.selectedNodes.filter((n) => n !== node);
+    } else {
+        props.viewModel.displayedGraph.selectedNodes.push(node);
+    }
 };
 
 const unselectAllNodes = () => {
