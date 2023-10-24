@@ -34,20 +34,7 @@ export class DependencyEngine<CalculationData = any> extends BaseEngine<Calculat
         const calculateComponent = async (sortedComponent: ITopologicalSortingResult) => {
             const { calculationOrder, connectionsFromNode } = sortedComponent;
 
-            let starIdx = 0;
-
-            if (updatedNode) {
-                starIdx = calculationOrder.findIndex((n) => n.id === updatedNode.id);
-            }
-
-            if (starIdx === -1) {
-                throw new Error(
-                    `Could not find node ${updatedNode?.id} in calculation order\n` +
-                    'This is likely a Baklava internal issue. Please report it on GitHub.'
-                );
-            }
-
-            for (let i = starIdx; i < calculationOrder.length; i++) {
+            for (let i = 0; i < calculationOrder.length; i++) {
                 const node = calculationOrder[i];
 
                 if (!node.calculate) {
@@ -93,6 +80,17 @@ export class DependencyEngine<CalculationData = any> extends BaseEngine<Calculat
                     inputs: new Map(Object.entries(inputValues)),
                     outputs: new Map(Object.entries(outputValues)),
                 });
+
+                const subgraphResult : Map<string, any> = outputValues._calculationResults;
+
+                if (subgraphResult) {
+                    subgraphResult.forEach((v, k) => {
+                        result.set(k, {
+                            inputs: v.inputs,
+                            outputs: v.outputs,
+                        });
+                    })
+                }
 
                 if (connectionsFromNode.has(node)) {
                     connectionsFromNode.get(node)!.forEach((connection) => {
