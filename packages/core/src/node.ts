@@ -21,7 +21,7 @@ export type CalculateFunctionReturnType<O> = O | Promise<O> | void;
 export type CalculateFunction<I, O, C extends CalculationContext = CalculationContext> = (
     inputs: I,
     context: C,
-) => CalculateFunctionReturnType<O>;
+    ) => CalculateFunctionReturnType<O>;
 
 export interface INodeState<I, O> {
     type: string;
@@ -229,6 +229,8 @@ export abstract class AbstractNode implements IBaklavaEventEmitter, IBaklavaTapa
         afterEvent.emit(io);
         return true;
     }
+
+    public isInterfaceEqualTo? : (intf: NodeInterface, value: any) => boolean
 }
 
 /**
