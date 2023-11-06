@@ -91,7 +91,7 @@ export abstract class AbstractNode implements IBaklavaEventEmitter, IBaklavaTapa
      * @param input The input instance
      * @returns True when the input was added, otherwise false (prevented by an event handler)
      */
-    protected addInput(key: string, input: NodeInterface): boolean {
+    public addInput(key: string, input: NodeInterface): boolean {
         return this.addInterface("input", key, input);
     }
 
@@ -109,7 +109,7 @@ export abstract class AbstractNode implements IBaklavaEventEmitter, IBaklavaTapa
      * Remove an existing input
      * @param key Key of the input.
      */
-    protected removeInput(key: string): boolean {
+    public removeInput(key: string): boolean {
         return this.removeInterface("input", key);
     }
 

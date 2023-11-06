@@ -4,7 +4,8 @@ import type { ICommand, ICommandHandler } from "../commands";
 import {
     SUBGRAPH_INPUT_NODE_TYPE,
     SUBGRAPH_OUTPUT_NODE_TYPE,
-    SubgraphOutputNode, SubgraphInputNode
+    SUBGRAPH_CONTROL_NODE_TYPE,
+    SubgraphOutputNode, SubgraphInterfaceNode
 } from "./subgraphInterfaceNodes";
 
 export const SAVE_SUBGRAPH_COMMAND = "SAVE_SUBGRAPH";
@@ -21,7 +22,7 @@ export function registerSaveSubgraphCommand(displayedGraph: Ref<Graph>, handler:
         const interfaceConnections: Connection[] = [];
 
         const inputs: IGraphInterface[] = [];
-        const inputNodes = graph.nodes.filter((n) => n.type === SUBGRAPH_INPUT_NODE_TYPE) as unknown as SubgraphInputNode[];
+        const inputNodes = graph.nodes.filter(({type}) => [SUBGRAPH_INPUT_NODE_TYPE, SUBGRAPH_CONTROL_NODE_TYPE].includes(type)) as unknown as SubgraphInterfaceNode<any, any>[];
         for (const n of inputNodes) {
             const connections = graph.connections.filter((c) => c.from === n.outputs.placeholder);
             connections.forEach((c) => {

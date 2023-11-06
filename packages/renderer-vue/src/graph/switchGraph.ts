@@ -1,6 +1,6 @@
 import { Ref } from "vue";
 import { AbstractNode, Editor, Graph, GraphTemplate } from "@baklavajs/core";
-import { SubgraphInputNode, SubgraphOutputNode } from "./subgraphInterfaceNodes";
+import { SubgraphInputNode, SubgraphOutputNode, SubgraphControlNode } from "./subgraphInterfaceNodes";
 
 export type SwitchGraph = (newGraph: Graph | GraphTemplate) => void;
 
@@ -40,7 +40,7 @@ export function useSwitchGraph(editor: Ref<Editor>, displayedGraph: Ref<Graph>) 
             // create interface nodes
             newGraphInstance.inputs.forEach((input, idx) => {
                 let node = newGraphInstance.nodes.find(
-                    (n) => n instanceof SubgraphInputNode && n.graphInterfaceId === input.id,
+                    (n) => (n instanceof SubgraphInputNode || n instanceof SubgraphControlNode) && n.graphInterfaceId === input.id,
                 ) as SubgraphInputNode;
 
                 if (!node) {

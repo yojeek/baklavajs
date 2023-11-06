@@ -8,8 +8,10 @@ import { IHistory, useHistory } from "./history";
 import { registerGraphCommands } from "./graph";
 import { useSwitchGraph } from "./graph/switchGraph";
 import { IViewNodeState, setViewNodeProperties } from "./node/viewNode";
-import { SubgraphInputNode, SubgraphOutputNode } from "./graph/subgraphInterfaceNodes";
+import { updateSubgraphNodeInterfaces } from "./node/subgraphViewNode";
+import { SubgraphInputNode, SubgraphOutputNode, SubgraphControlNode } from "./graph/subgraphInterfaceNodes";
 import { registerSidebarCommands } from "./sidebar";
+import { AbstractGraphNode } from "@baklavajs/core/src";
 
 export interface IViewSettings {
     /** Use straight connections instead of bezier curves */
@@ -135,10 +137,24 @@ export function useBaklava(existingEditor?: Editor): IBaklavaViewModel {
                     return state;
                 });
 
-                newValue.graphEvents.beforeAddNode.subscribe(token, (node) => setViewNodeProperties(node));
+                newValue.graphEvents.beforeAddNode.subscribe(token, (node) => {
+                    setViewNodeProperties(node);
+
+                    if ((node as unknown as AbstractGraphNode).template) {
+                        node.events.update.subscribe(token, (data) => {
+                            // data === null in that case means that GraphNode inputs were updated
+                            // after the node template was updated (see packages/core/src/graphNode.ts)
+                            // todo introduce separate event `afterNodeTemplateUpdated`
+                            if (data === null) {
+                                updateSubgraphNodeInterfaces(node as any);
+                            }
+                        });
+                    }
+                });
 
                 editor.value.registerNodeType(SubgraphInputNode, { category: "Subgraphs" });
                 editor.value.registerNodeType(SubgraphOutputNode, { category: "Subgraphs" });
+                editor.value.registerNodeType(SubgraphControlNode, { category: "Subgraphs" });
 
                 switchGraph(newValue.graph);
             }
