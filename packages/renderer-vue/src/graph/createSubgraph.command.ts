@@ -3,13 +3,13 @@ import { v4 as uuidv4 } from "uuid";
 import { reactive, Ref } from "vue";
 import type { ICommand, ICommandHandler } from "../commands";
 import { SaveSubgraphCommand, SAVE_SUBGRAPH_COMMAND } from "./saveSubgraph.command";
-import { SUBGRAPH_INPUT_NODE_TYPE, SUBGRAPH_OUTPUT_NODE_TYPE } from "./subgraphInterfaceNodes";
+import { SUBGRAPH_INPUT_NODE_TYPE, SUBGRAPH_OUTPUT_NODE_TYPE, SUBGRAPH_CONTROL_NODE_TYPE } from "./subgraphInterfaceNodes";
 import type { SwitchGraph } from "./switchGraph";
 
 export const CREATE_SUBGRAPH_COMMAND = "CREATE_SUBGRAPH";
 export type CreateSubgraphCommand = ICommand<void>;
 
-const IGNORE_NODE_TYPES = [SUBGRAPH_INPUT_NODE_TYPE, SUBGRAPH_OUTPUT_NODE_TYPE];
+const IGNORE_NODE_TYPES = [SUBGRAPH_INPUT_NODE_TYPE, SUBGRAPH_OUTPUT_NODE_TYPE, SUBGRAPH_CONTROL_NODE_TYPE];
 
 export function registerCreateSubgraphCommand(
     displayedGraph: Ref<Graph>,

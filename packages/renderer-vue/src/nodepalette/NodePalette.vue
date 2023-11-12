@@ -26,7 +26,11 @@ import { usePointer } from "@vueuse/core";
 import { AbstractNode, INodeTypeInformation } from "@baklavajs/core";
 import PaletteEntry from "./PaletteEntry.vue";
 import { useViewModel, useTransform } from "../utility";
-import { SUBGRAPH_INPUT_NODE_TYPE, SUBGRAPH_OUTPUT_NODE_TYPE } from "../graph/subgraphInterfaceNodes";
+import {
+  SUBGRAPH_CONTROL_NODE_TYPE,
+  SUBGRAPH_INPUT_NODE_TYPE,
+  SUBGRAPH_OUTPUT_NODE_TYPE
+} from "../graph/subgraphInterfaceNodes";
 import { checkRecursion } from "./checkRecursion";
 
 type NodeTypeInformations = Record<string, INodeTypeInformation>;
@@ -65,7 +69,7 @@ export default defineComponent({
                 } else {
                     // if we are not in a subgraph, don't show subgraph input & output nodes
                     nodeTypesInCategory = nodeTypesInCategory.filter(
-                        ([nt]) => ![SUBGRAPH_INPUT_NODE_TYPE, SUBGRAPH_OUTPUT_NODE_TYPE].includes(nt),
+                        ([nt]) => ![SUBGRAPH_INPUT_NODE_TYPE, SUBGRAPH_OUTPUT_NODE_TYPE, SUBGRAPH_CONTROL_NODE_TYPE].includes(nt),
                     );
                 }
 

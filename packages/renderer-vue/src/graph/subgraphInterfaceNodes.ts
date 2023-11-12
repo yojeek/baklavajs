@@ -4,12 +4,13 @@ import { TextInputInterface } from "../nodeinterfaces";
 
 export const SUBGRAPH_INPUT_NODE_TYPE = "__baklava_SubgraphInputNode";
 export const SUBGRAPH_OUTPUT_NODE_TYPE = "__baklava_SubgraphOutputNode";
+export const SUBGRAPH_CONTROL_NODE_TYPE = "__baklava_SubgraphControlNode";
 
 export interface ISubgraphInterfaceState<I, O> extends INodeState<I, O> {
     graphInterfaceId: string;
 }
 
-abstract class SubgraphInterfaceNode<I, O> extends Node<I, O> implements ISubgraphInterfaceNode {
+export abstract class SubgraphInterfaceNode<I, O> extends Node<I, O> implements ISubgraphInterfaceNode {
     public graphInterfaceId: string;
 
     constructor() {
@@ -48,7 +49,7 @@ interface SubgraphInputNodeOutputs {
     placeholder: string;
 }
 
-export class SubgraphInputNode extends SubgraphInterfaceNode<SubgraphInputNodeInputs, SubgraphInputNodeOutputs> implements ISubgraphInterfaceNode{
+export class SubgraphInputNode extends SubgraphInterfaceNode<SubgraphInputNodeInputs, SubgraphInputNodeOutputs> implements ISubgraphInterfaceNode {
     public readonly type = SUBGRAPH_INPUT_NODE_TYPE;
     _title = "Subgraph Input";
     public inputs = {
@@ -64,9 +65,10 @@ interface SubgraphOutputNodeInputs {
     placeholder: string;
 }
 
-interface SubgraphOutputNodeOutputs {}
+interface SubgraphOutputNodeOutputs {
+}
 
-export class SubgraphOutputNode extends SubgraphInterfaceNode<SubgraphOutputNodeInputs, SubgraphOutputNodeOutputs> implements ISubgraphInterfaceNode{
+export class SubgraphOutputNode extends SubgraphInterfaceNode<SubgraphOutputNodeInputs, SubgraphOutputNodeOutputs> implements ISubgraphInterfaceNode {
     public readonly type = SUBGRAPH_OUTPUT_NODE_TYPE;
     _title = "Subgraph Output";
     public inputs = {
@@ -74,6 +76,25 @@ export class SubgraphOutputNode extends SubgraphInterfaceNode<SubgraphOutputNode
         placeholder: new NodeInterface("Connection", ''),
     };
     public outputs = {};
+}
+
+interface SubgraphControlNodeInputs {
+    name: string;
+}
+
+interface SubgraphControlNodeOutputs {
+    placeholder: string;
+}
+
+export class SubgraphControlNode extends SubgraphInterfaceNode<SubgraphControlNodeInputs, SubgraphControlNodeOutputs> implements ISubgraphInterfaceNode {
+    public readonly type = SUBGRAPH_CONTROL_NODE_TYPE;
+    _title = "Subgraph Control";
+    public inputs = {
+        name: new TextInputInterface("Name", "Control").setPort(false),
+    };
+    public outputs = {
+        placeholder: new NodeInterface("Connection", ''),
+    };
 }
 
 export type InputNode = NodeInstanceOf<typeof SubgraphInputNode> & ISubgraphInterfaceNode;
