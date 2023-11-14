@@ -1,5 +1,5 @@
-import {Editor, NodeInterface, defineNode} from "@baklavajs/core";
-import {TestNode} from "./testNode";
+import { Editor, NodeInterface, defineNode } from "@baklavajs/core";
+import { TestNode } from "./testNode";
 import {
     AfterNodeCalculationEventData,
     BeforeNodeCalculationEventData,
@@ -59,14 +59,6 @@ describe("DependencyEngine", () => {
         } as AfterNodeCalculationEventData);
     });
 
-    it("handles nodes without a calculate method", async () => {
-        const editor = new Editor();
-        const NoCalculationNode = defineNode({type: "NoCalculation"});
-        editor.graph.addNode(new NoCalculationNode());
-        const engine = new DependencyEngine<void>(editor);
-        expect(await engine.runOnce()).toEqual(new Map());
-    });
-
     it("allows using multiple connections", async () => {
         const editor = new Editor();
         const spy = jest.fn();
@@ -75,7 +67,7 @@ describe("DependencyEngine", () => {
             inputs: {
                 a: () => new NodeInterface<number[]>("a", [0]).use(allowMultipleConnections),
             },
-            calculate({a}) {
+            calculate({ a }) {
                 spy(a);
                 return {};
             },
@@ -89,6 +81,35 @@ describe("DependencyEngine", () => {
         await engine.runOnce();
 
         expect(spy).toHaveBeenCalledWith([2, 0]);
+    });
+
+    it("handles nodes without calculate functions", async () => {
+        const editor = new Editor();
+        const NoCalculateNode = defineNode({
+            type: "NoCalculateNode",
+            outputs: {
+                a: () => new NodeInterface("a", 3),
+            },
+        });
+        const n1 = editor.graph.addNode(new NoCalculateNode())!;
+        const n2 = editor.graph.addNode(new TestNode())!;
+        editor.graph.addConnection(n1.outputs.a, n2.inputs.a);
+
+        const engine = new DependencyEngine<void>(editor);
+        const result = await engine.runOnce();
+
+        expect(result).toEqual(
+            new Map([
+                [n1.id, new Map([["a", 3]])],
+                [
+                    n2.id,
+                    new Map([
+                        ["c", 4],
+                        ["d", 2],
+                    ]),
+                ],
+            ]),
+        );
     });
 
     it("calculate nodes only in connected components", async () => {

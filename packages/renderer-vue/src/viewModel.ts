@@ -31,6 +31,8 @@ export interface IViewSettings {
         /** Whether users should be able to resize the sidebar */
         resizable: boolean;
     };
+    /** Show interface value on port hover */
+    displayValueOnHover: boolean;
 }
 
 export interface IBaklavaViewModel extends IBaklavaTapable {
@@ -74,6 +76,7 @@ export function useBaklava(existingEditor?: Editor): IBaklavaViewModel {
             width: 300,
             resizable: true,
         },
+        displayValueOnHover: false,
     } satisfies IViewSettings);
 
     const commandHandler = useCommandHandler();

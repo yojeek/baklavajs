@@ -35,6 +35,8 @@ import SidebarNode from "./SidebarNode";
 import DynamicNode from "./DynamicNode";
 import UpdateTestNode from "./UpdateTestNode";
 
+import ReactiveOutputTestNode from "./ReactiveOutputTestNode";
+
 import { stringType, numberType, booleanType } from "./interfaceTypes";
 
 import CommentNodeRenderer from "./CommentNodeRenderer.vue";
@@ -48,7 +50,7 @@ const editor = baklavaView.editor;
 (window as any).editor = baklavaView.editor;
 baklavaView.settings.enableMinimap = true;
 baklavaView.settings.sidebar.resizable = false;
-
+baklavaView.settings.displayValueOnHover = true;
 const engine = new DependencyEngine(editor);
 engine.events.afterRun.subscribe(token, (r) => {
     engine.pause();
@@ -76,6 +78,7 @@ editor.registerNodeType(SelectTestNode);
 editor.registerNodeType(SidebarNode);
 editor.registerNodeType(DynamicNode);
 editor.registerNodeType(UpdateTestNode);
+editor.registerNodeType(ReactiveOutputTestNode);
 
 editor.graph.addNode(new TestNode());
 editor.graph.addNode(new TestNode());
