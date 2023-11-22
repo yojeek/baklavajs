@@ -8,6 +8,7 @@ import {
     START_TRANSACTION_COMMAND,
 } from "./history";
 import { ICommand, ICommandHandler } from "./commands";
+import { INodeInterfaceState } from "@baklavajs/core/src";
 
 export const COPY_COMMAND = "COPY";
 export const PASTE_COMMAND = "PASTE";
@@ -103,21 +104,6 @@ export function useClipboard(
             const generatedId = copiedNode.id;
             newNodes.push(copiedNode);
 
-            const tapInterfaces = (intfs: Record<string, NodeInterface<any>>) => {
-                Object.values(intfs).forEach((intf) => {
-                    intf.hooks.load.subscribe(token, (intfState) => {
-                        const newIntfId = uuidv4();
-                        idmap.set(intfState.id, newIntfId);
-                        intf.id = newIntfId;
-                        intf.hooks.load.unsubscribe(token);
-                        return intfState;
-                    });
-                });
-            };
-
-            tapInterfaces(copiedNode.inputs);
-            tapInterfaces(copiedNode.outputs);
-
             copiedNode.hooks.beforeLoad.subscribe(token, (nodeState) => {
                 const ns = nodeState as any;
                 if (ns.position) {
@@ -128,10 +114,28 @@ export function useClipboard(
                 return ns;
             });
 
+            const mutateInterfaceState = (intfState: INodeInterfaceState<any>) => {
+                const newIntfId = uuidv4();
+                idmap.set(intfState.id, newIntfId);
+                intfState.id = newIntfId;
+            }
+
+            const mutateState = (state: INodeState<any, any>) => {
+                const newState = { ...state };
+
+                Object.values(newState.inputs).forEach(mutateInterfaceState);
+                Object.values(newState.outputs).forEach(mutateInterfaceState);
+
+                return newState;
+            }
+
+            const mutatedState = mutateState(oldNode);
+
             graph.addNode(copiedNode);
-            copiedNode.load({ ...oldNode, id: generatedId });
+            copiedNode.load({ ...mutatedState, id: generatedId });
             copiedNode.id = generatedId;
-            idmap.set(oldNode.id, generatedId);
+
+            newNodes.push(copiedNode);
         }
 
         for (const c of parsedConnectionBuffer) {
