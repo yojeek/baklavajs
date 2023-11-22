@@ -1,4 +1,4 @@
-import { AbstractNode, AbstractGraphNode } from "@baklavajs/core";
+import { AbstractGraphNode, AbstractNode } from "@baklavajs/core";
 import { SubgraphControlNode, SubgraphInterfaceNode } from "../graph/subgraphInterfaceNodes";
 
 function cloneNodeInterface(targetNode: AbstractNode, targetInterfaceKey: string) {
@@ -55,7 +55,20 @@ export function updateSubgraphNodeInterfaces(node: AbstractGraphNode) {
                 continue;
             }
 
-            node.addInput(graphInput.id, cloneNodeInterface(targetNode, targetInterfaceKey).setPort(false));
+            const clone = cloneNodeInterface(targetNode, targetInterfaceKey);
+
+            if (existingInterface) {
+                // attempt to restore interface value, may fail if new interface has different type
+                try {
+                    clone.value = existingInterface.value;
+                } catch (e : any) {
+                    console.warn(`Could not set value for ${existingInterface.id}: ${e.message}`);
+                }
+            }
+
+            clone.name = subgraphInterfaceNode.inputs.name.value;
+
+            node.addInput(graphInput.id, clone.setPort(false));
         }
     }
 }
