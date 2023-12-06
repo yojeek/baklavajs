@@ -61,9 +61,10 @@ export class DependencyEngine<CalculationData = any> extends BaseEngine<Calculat
 
                 // to avoid extra calculations, make following checks
                 // - if no updated node provided, calculate all
-                // - if the node is the updated node, calculate it (assume that inputs changed)
+                // - if the node is the updated node, calculate it
+                // - if node has alwaysRecalculate flag, do as stated
                 // - if the node is not the updated node, check if inputs changed
-                if (!updatedNode || node.id === updatedNode.id || Object.values(inputsChanged).filter(v => !!v).length) {
+                if (!updatedNode || node.id === updatedNode.id || node.alwaysRecalculate || Object.values(inputsChanged).filter(v => !!v).length) {
                     outputValues = await node.calculate(inputValues, { globalValues: calculationData, engine: this })
                 } else {
                     // collect current output values

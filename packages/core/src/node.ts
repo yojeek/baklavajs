@@ -231,6 +231,7 @@ export abstract class AbstractNode implements IBaklavaEventEmitter, IBaklavaTapa
     }
 
     public isInterfaceEqualTo? : (intf: NodeInterface, value: any) => boolean
+    public alwaysRecalculate? : boolean = false
 }
 
 /**
