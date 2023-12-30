@@ -57,15 +57,6 @@ export function updateSubgraphNodeInterfaces(node: AbstractGraphNode) {
 
             const clone = cloneNodeInterface(targetNode, targetInterfaceKey);
 
-            if (existingInterface) {
-                // attempt to restore interface value, may fail if new interface has different type
-                try {
-                    clone.value = existingInterface.value;
-                } catch (e : any) {
-                    console.warn(`Could not set value for ${existingInterface.id}: ${e.message}`);
-                }
-            }
-
             clone.name = subgraphInterfaceNode.inputs.name.value;
 
             node.addInput(graphInput.id, clone.setPort(false));
