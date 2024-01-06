@@ -15,7 +15,7 @@ export function registerSwitchToMainGraphCommand(
     handler.registerCommand<SwitchToMainGraphCommand>(SWITCH_TO_MAIN_GRAPH_COMMAND, {
         canExecute: () => displayedGraph.value !== displayedGraph.value.editor.graph,
         execute: () => {
-            handler.executeCommand(SAVE_SUBGRAPH_COMMAND);
+            // handler.executeCommand(SAVE_SUBGRAPH_COMMAND);
             switchGraph(displayedGraph.value.editor.graph);
         },
     });
