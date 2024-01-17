@@ -1,4 +1,5 @@
 /// <reference types="@types/node" />
+// @ts-nocheck
 
 import * as path from "path";
 import { defineConfig } from "vite";

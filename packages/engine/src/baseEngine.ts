@@ -129,7 +129,7 @@ export abstract class BaseEngine<CalculationData, CalculationArgs extends Array<
         });
 
         this.editor.graphEvents.removeConnection.subscribe(this, (c, graph) => {
-                        this.recalculateOrder = true;
+            this.recalculateOrder = true;
             if (!graph.loading && graph.activeTransactions === 0) {
                 this.internalOnChange();
             }

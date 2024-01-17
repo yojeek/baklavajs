@@ -56,7 +56,6 @@ engine.events.afterRun.subscribe(token, (r) => {
     engine.pause();
     applyResult(r, editor);
     engine.resume();
-    console.log(r);
 });
 engine.hooks.gatherCalculationData.subscribe(token, () => "def");
 engine.start();
@@ -80,27 +79,35 @@ editor.registerNodeType(DynamicNode);
 editor.registerNodeType(UpdateTestNode);
 editor.registerNodeType(ReactiveOutputTestNode);
 
-editor.graph.addNode(new TestNode());
-editor.graph.addNode(new TestNode());
-editor.graph.addNode(new TestNode());
-editor.graph.addNode(new OutputNode());
-editor.graph.addNode(new BuilderTestNode());
-editor.graph.addNode(new AdvancedNode());
-
 const calculate = async () => {
     console.log(await engine.runOnce("def"));
 };
 
 const save = () => {
-    console.log(JSON.stringify(editor.save()));
+    let state = editor.save();
+    window.localStorage.setItem("baklava", JSON.stringify(state));
+    console.log('Saved state to localStorage');
 };
 
 const load = () => {
-    const s = prompt();
-    if (s) {
-        editor.load(JSON.parse(s));
+    let state;
+
+    try {
+        state = JSON.parse(window.localStorage.getItem("baklava")!);
+
+        if (state) {
+            editor.load(state);
+            return;
+        }
+
+        console.log('Loaded state from localStorage')
+    } catch (e) {
+        console.error(e);
+        return;
     }
 };
+
+load();
 
 const saveAndLoad = () => {
     editor.load(editor.save());
@@ -117,6 +124,8 @@ const setSelectItems = () => {
             ];
         }
     }
+
+    state && editor.load(state);
 };
 
 const changeGridSize = () => {

@@ -42,7 +42,7 @@ export class DependencyEngine<CalculationData = any> extends BaseEngine<Calculat
                 }
 
                 const inputValues: Record<string, any> = {};
-                let inputsChanged: Record<string, boolean> = {};
+                const inputsChanged: Record<string, boolean> = {};
 
                 Object.entries(node.inputs).forEach(([k, intf]: [string, NodeInterface]) => {
                     inputValues[k] = inputs.has(intf.id) ? inputs.get(intf.id) : intf.value;

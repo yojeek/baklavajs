@@ -27,9 +27,9 @@ import { AbstractNode, INodeTypeInformation } from "@baklavajs/core";
 import PaletteEntry from "./PaletteEntry.vue";
 import { useViewModel, useTransform } from "../utility";
 import {
-  SUBGRAPH_CONTROL_NODE_TYPE,
-  SUBGRAPH_INPUT_NODE_TYPE,
-  SUBGRAPH_OUTPUT_NODE_TYPE
+    SUBGRAPH_CONTROL_NODE_TYPE,
+    SUBGRAPH_INPUT_NODE_TYPE,
+    SUBGRAPH_OUTPUT_NODE_TYPE
 } from "../graph/subgraphInterfaceNodes";
 import { checkRecursion } from "./checkRecursion";
 
