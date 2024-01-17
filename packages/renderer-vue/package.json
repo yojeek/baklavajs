@@ -1,7 +1,7 @@
 {
-    "name": "@baklavajs/renderer-vue",
+    "name": "@pakhlava/renderer-vue",
     "version": "2.2.0",
-    "description": "Vue frontend for BaklavaJS",
+    "description": "Vue frontend for (a fork of) BaklavaJS",
     "author": "newcat <freddy.wagner@web.de>",
     "homepage": "https://newcat.github.io/baklavajs",
     "license": "MIT",
@@ -24,7 +24,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/newcat/baklavajs.git"
+        "url": "git+https://github.com/yojeek/baklavajs.git"
     },
     "bugs": {
         "url": "https://github.com/newcat/baklavajs/issues"
@@ -50,6 +50,5 @@
     },
     "publishConfig": {
         "access": "public"
-    },
-    "gitHead": "723bf8b6249e6b67d9a7a5a9c84cf1ee0ca33739"
+    }
 }
