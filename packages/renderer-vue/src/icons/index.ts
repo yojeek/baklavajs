@@ -6,4 +6,5 @@ export { default as Copy } from "./Copy.vue";
 export { default as DeviceFloppy } from "./DeviceFloppy.vue";
 export { default as Hierarchy2 } from "./Hierarchy2.vue";
 export { default as VerticalDots } from "./VerticalDots.vue";
+export { default as Save } from "./Save.vue";
 export { default as TrashBin } from "./TrashBin.vue";
