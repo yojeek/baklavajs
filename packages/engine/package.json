@@ -1,6 +1,6 @@
 {
-    "name": "@pakhlava/engine",
-    "version": "2.1.1",
+    "name": "@baklavajs/engine",
+    "version": "2.1.2",
     "description": "Execute (a fork of) BaklavaJS graphs",
     "author": "newcat <freddy.wagner@web.de>",
     "homepage": "https://newcat.github.io/baklavajs",

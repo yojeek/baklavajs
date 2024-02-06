@@ -679,7 +679,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@baklavajs/core@^2.1.1, @baklavajs/core@workspace:packages/core":
+"@baklavajs/core@2.1.1, @baklavajs/core@^2.1.1, @baklavajs/core@workspace:packages/core":
   version: 0.0.0-use.local
   resolution: "@baklavajs/core@workspace:packages/core"
   dependencies:
@@ -737,7 +737,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@baklavajs/renderer-vue@workspace:packages/renderer-vue"
   dependencies:
-    "@baklavajs/core": ^2.1.1
+    "@baklavajs/core": 2.1.1
     "@baklavajs/events": ^2.1.1
     "@types/resize-observer-browser": ^0.1.9
     "@vitejs/plugin-vue": ^4.4.0

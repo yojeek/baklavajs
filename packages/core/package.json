@@ -1,5 +1,5 @@
 {
-    "name": "@pakhlava/core",
+    "name": "@baklavajs/core",
     "version": "2.1.1",
     "description": "Core logic of (a fork of) BaklavaJS, a graph editor / node editor for the web",
     "author": "newcat <freddy.wagner@web.de>",
