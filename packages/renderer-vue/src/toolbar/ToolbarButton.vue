@@ -1,9 +1,10 @@
 <template>
     <button
         class="baklava-toolbar-entry baklava-toolbar-button"
-        :disabled="!viewModel.commandHandler.canExecuteCommand(command)"
+        :class="{ '--active': isExecuting }"
+        :disabled="isDisabled"
         :title="title"
-        @click="viewModel.commandHandler.executeCommand(command)"
+        @click="handleClick"
     >
         <component :is="icon" v-if="icon" />
         <template v-else>
@@ -13,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
+import { defineComponent, computed } from "vue";
 import { useViewModel } from "../utility";
 
 export default defineComponent({
@@ -32,9 +33,31 @@ export default defineComponent({
             default: undefined,
         },
     },
-    setup() {
+    setup(props) {
         const { viewModel } = useViewModel();
-        return { viewModel };
+
+        const isDisabled = computed(() => {
+            const commandHandler = viewModel.value.commandHandler;
+
+            return !commandHandler.canExecuteCommand(props.command) && !commandHandler.canStopExecution(props.command);
+        });
+        const isExecuting = computed(() => viewModel.value.commandHandler.canStopExecution(props.command));
+
+        const handleClick = () => {
+            if (!isExecuting.value) {
+                viewModel.value.commandHandler.executeCommand(props.command);
+            } else {
+                viewModel.value.commandHandler.stopExecution(props.command);
+            }
+        };
+
+        return { viewModel, isDisabled, isExecuting, handleClick };
     },
 });
 </script>
+
+<style>
+.baklava-toolbar-button.--active {
+    color: var(--baklava-control-color-error);
+}
+</style>

@@ -34,4 +34,8 @@
     &[disabled] {
         color: var(--baklava-control-color-disabled-foreground);
     }
+
+    &.--active {
+        color: var(--baklava-control-color-error);
+    }
 }
