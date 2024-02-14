@@ -1,7 +1,7 @@
 {
-    "name": "@baklavajs/themes",
+    "name": "@pakhlava/themes",
     "version": "2.2.0",
-    "description": "Themes for BaklavaJS",
+    "description": "Themes for (a fork of) BaklavaJS",
     "author": "newcat <freddy.wagner@web.de>",
     "homepage": "https://newcat.github.io/baklavajs",
     "license": "MIT",

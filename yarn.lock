@@ -679,9 +679,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@baklavajs/core@2.1.1, @baklavajs/core@^2.1.1, @baklavajs/core@workspace:packages/core":
+"@baklavajs/core@npm:@pakhlava/core@2.1.2, @pakhlava/core@workspace:packages/core":
   version: 0.0.0-use.local
-  resolution: "@baklavajs/core@workspace:packages/core"
+  resolution: "@pakhlava/core@workspace:packages/core"
   dependencies:
     "@baklavajs/events": ^2.1.1
     "@types/jest": ^29.5.7
@@ -695,6 +695,16 @@ __metadata:
     uuid: ^9.0.1
   languageName: unknown
   linkType: soft
+
+"@baklavajs/core@npm:^2.1.1, @baklavajs/core@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@baklavajs/core@npm:2.4.0"
+  dependencies:
+    "@baklavajs/events": ^2.3.0
+    uuid: ^9.0.1
+  checksum: 4e3152a627d33f524b08a6431a1cbdad4e5d18262e8d61afd4b210e1aac5d23f0ca7c2cb841fada29600798c1b54f1c0216f566660026dd2a3ee3352fc027065
+  languageName: node
+  linkType: hard
 
 "@baklavajs/engine@^2.1.1, @baklavajs/engine@workspace:packages/engine":
   version: 0.0.0-use.local
@@ -718,6 +728,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@baklavajs/events@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@baklavajs/events@npm:2.3.0"
+  checksum: 7aa0c5de1a2ac54126f86e8fed16e360220c909049cc4bcf10241afbfda87e4c3c982442ef204f8f7c0a90a1e613d2e36e0001953252b53321936d2cebfd90ce
+  languageName: node
+  linkType: hard
+
 "@baklavajs/interface-types@^2.2.0, @baklavajs/interface-types@workspace:packages/interface-types":
   version: 0.0.0-use.local
   resolution: "@baklavajs/interface-types@workspace:packages/interface-types"
@@ -733,39 +750,22 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@baklavajs/renderer-vue@^2.2.0, @baklavajs/renderer-vue@workspace:packages/renderer-vue":
-  version: 0.0.0-use.local
-  resolution: "@baklavajs/renderer-vue@workspace:packages/renderer-vue"
+"@baklavajs/renderer-vue@npm:^2.2.0":
+  version: 2.4.0
+  resolution: "@baklavajs/renderer-vue@npm:2.4.0"
   dependencies:
-    "@baklavajs/core": 2.1.1
-    "@baklavajs/events": ^2.1.1
-    "@types/resize-observer-browser": ^0.1.9
-    "@vitejs/plugin-vue": ^4.4.0
-    "@vue/compiler-sfc": ^3.3.7
-    "@vueuse/core": ^10.5.0
-    rollup-plugin-peer-deps-external: ^2.2.4
-    rollup-plugin-visualizer: ^5.9.2
-    rollup-plugin-vue: ^6.0.0
-    sass: ^1.69.5
-    typescript: ^5.2.2
-    vite: ^4.5.0
-    vite-plugin-dts: ^3.6.3
-    vue: ^3.3.7
-    vue-tsc: ^1.8.22
-  languageName: unknown
-  linkType: soft
+    "@baklavajs/core": ^2.4.0
+    "@baklavajs/events": ^2.3.0
+  checksum: c9a2318fd02602a8aadb7a7e4a0fada45bd3f1f8a4da2b168ad077c9205175df503e2a62d4618cf3cb3c21569b756c78e1b06133e65dc7a7687bdb1e59335089
+  languageName: node
+  linkType: hard
 
-"@baklavajs/themes@^2.2.0, @baklavajs/themes@workspace:packages/themes":
-  version: 0.0.0-use.local
-  resolution: "@baklavajs/themes@workspace:packages/themes"
-  dependencies:
-    "@types/sass": ^1.45.0
-    rimraf: ^5.0.5
-    sass: ^1.69.5
-    ts-node: ^10.9.1
-    typescript: ^5.2.2
-  languageName: unknown
-  linkType: soft
+"@baklavajs/themes@npm:^2.2.0":
+  version: 2.4.0
+  resolution: "@baklavajs/themes@npm:2.4.0"
+  checksum: 6eff81541441a550233f3044a4e0622be7c93a2109b6757b8683da5541c8f62fd11fd6daf15ef6e9508f6b6297f5c0793557456f51dd20fcd72714e474799b5a
+  languageName: node
+  linkType: hard
 
 "@bcoe/v8-coverage@npm:^0.2.3":
   version: 0.2.3
@@ -2173,6 +2173,40 @@ __metadata:
   checksum: f55d096aaed3e04b8308d4422104fb888f355988056ba7b7ef0a4c397b8a3e54290d7827b06774dbe0c9ce55280b00db486286954f9c265aa6b03091026d9da8
   languageName: node
   linkType: hard
+
+"@pakhlava/renderer-vue@workspace:packages/renderer-vue":
+  version: 0.0.0-use.local
+  resolution: "@pakhlava/renderer-vue@workspace:packages/renderer-vue"
+  dependencies:
+    "@baklavajs/core": "npm:@pakhlava/core@2.1.2"
+    "@baklavajs/events": ^2.1.1
+    "@types/resize-observer-browser": ^0.1.9
+    "@vitejs/plugin-vue": ^4.4.0
+    "@vue/compiler-sfc": ^3.3.7
+    "@vueuse/core": ^10.5.0
+    rollup-plugin-peer-deps-external: ^2.2.4
+    rollup-plugin-visualizer: ^5.9.2
+    rollup-plugin-vue: ^6.0.0
+    sass: ^1.69.5
+    typescript: ^5.2.2
+    vite: ^4.5.0
+    vite-plugin-dts: ^3.6.3
+    vue: ^3.3.7
+    vue-tsc: ^1.8.22
+  languageName: unknown
+  linkType: soft
+
+"@pakhlava/themes@workspace:packages/themes":
+  version: 0.0.0-use.local
+  resolution: "@pakhlava/themes@workspace:packages/themes"
+  dependencies:
+    "@types/sass": ^1.45.0
+    rimraf: ^5.0.5
+    sass: ^1.69.5
+    ts-node: ^10.9.1
+    typescript: ^5.2.2
+  languageName: unknown
+  linkType: soft
 
 "@parcel/watcher@npm:2.0.4":
   version: 2.0.4
