@@ -1,6 +1,6 @@
 {
     "name": "@pakhlava/engine",
-    "version": "2.1.2",
+    "version": "2.1.3",
     "description": "Execute (a fork of) BaklavaJS graphs",
     "author": "newcat <freddy.wagner@web.de>",
     "homepage": "https://newcat.github.io/baklavajs",
@@ -26,7 +26,7 @@
         "url": "https://github.com/newcat/baklavajs/issues"
     },
     "dependencies": {
-        "@baklavajs/core": "npm:@pakhlava/core@2.1.2",
+        "@baklavajs/core": "npm:@pakhlava/core@^2.1.2",
         "@baklavajs/events": "^2.1.1"
     },
     "devDependencies": {
