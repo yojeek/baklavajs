@@ -107,7 +107,7 @@ export abstract class BaseEngine<CalculationData, CalculationArgs extends Array<
         this.editor.graphEvents.addNode.subscribe(this, (node, graph) => {
             this.recalculateOrder = true;
             if (!graph.loading && graph.activeTransactions === 0) {
-                this.internalOnChange();
+                this.internalOnChange(node);
             }
         });
 
@@ -122,7 +122,7 @@ export abstract class BaseEngine<CalculationData, CalculationArgs extends Array<
             this.recalculateOrder = true;
             if (!graph.loading && graph.activeTransactions === 0) {
                 // workaround for engine not recalculating if connection was removed and added simultaneously
-                // the issue will stiil exist in async calculate scenario, though.
+                // the issue will still exist in async calculate scenario, though.
                 // todo fixme
                 setTimeout( () => { this.internalOnChange() }, 0)
             }
